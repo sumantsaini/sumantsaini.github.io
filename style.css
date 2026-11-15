@@ -81,14 +81,11 @@ main {
     width: 92%;
     max-width: 1150px;
     margin: 35px auto;
-    display: flex;
-    flex-wrap: wrap;
     align-items: stretch;
     gap: 22px;
 }
 
 main > section {
-    flex: 1 1 440px;
     min-width: 0;
     padding: 25px;
     margin: 0;
@@ -333,4 +330,39 @@ body.light-mode button {
 
 body.light-mode button:hover {
     background-color: #805da5;
+}
+
+/* SNAKE GAME */
+
+#snake-game {
+    text-align: center;
+}
+
+#snake-board {
+    display: grid;
+    grid-template-columns: repeat(15, 20px);
+    width: 300px;
+    height: 300px;
+    margin: 20px auto;
+    background-color: #181321;
+    border: 3px solid #f5d98b;
+    box-sizing: content-box;
+}
+
+.snake-cell {
+    width: 20px;
+    height: 20px;
+}
+
+.snake-body {
+    background-color: #69c779;
+}
+
+.snake-food {
+    background-color: #f05252;
+    border-radius: 50%;
+}
+
+#snake-message {
+    margin: 15px;
 }
