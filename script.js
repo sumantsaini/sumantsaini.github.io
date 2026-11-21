@@ -232,3 +232,92 @@ if (document.getElementById("snake-board")) {
     // Show the board before the game starts
     drawGame();
 }
+
+
+/* WEATHER API */
+
+const weatherButton = document.getElementById("weather-button");
+const cityInput = document.getElementById("city-input");
+const weatherResult = document.getElementById("weather-result");
+
+// Get weather when the button is clicked
+if (weatherButton) {
+    weatherButton.addEventListener("click", getWeather);
+}
+
+async function getWeather() {
+    const city = cityInput.value.trim();
+
+    // Check if the user entered a city
+    if (city === "") {
+        weatherResult.textContent = "Please enter a city name.";
+        return;
+    }
+
+    weatherResult.textContent = "Loading weather...";
+
+    try {
+        // First API: Find the city's coordinates
+        const cityURL = "https://geocoding-api.open-meteo.com/v1/search?name="
+            + encodeURIComponent(city) + "&count=1";
+
+        const cityResponse = await fetch(cityURL);
+
+        if (!cityResponse.ok) {
+            throw new Error("City search failed.");
+        }
+
+        const cityData = await cityResponse.json();
+
+        if (!cityData.results || cityData.results.length === 0) {
+            weatherResult.textContent = "City not found. Try another city.";
+            return;
+        }
+
+        const location = cityData.results[0];
+
+        // Second API: Get current weather
+        const weatherURL = "https://api.open-meteo.com/v1/forecast?latitude="
+            + location.latitude
+            + "&longitude=" + location.longitude
+            + "&current=temperature_2m,relative_humidity_2m,wind_speed_10m";
+
+        const weatherResponse = await fetch(weatherURL);
+
+        if (!weatherResponse.ok) {
+            throw new Error("Weather request failed.");
+        }
+
+        const weatherData = await weatherResponse.json();
+
+        const weather = weatherData.current;
+
+        // Display the weather on the website
+        weatherResult.innerHTML = "";
+
+        const heading = document.createElement("h3");
+        heading.textContent = location.name + ", " + location.country;
+
+        const temperature = document.createElement("p");
+        temperature.textContent =
+            "Temperature: " + weather.temperature_2m + "°C";
+
+        const humidity = document.createElement("p");
+        humidity.textContent =
+            "Humidity: " + weather.relative_humidity_2m + "%";
+
+        const wind = document.createElement("p");
+        wind.textContent =
+            "Wind Speed: " + weather.wind_speed_10m + " km/h";
+
+        weatherResult.appendChild(heading);
+        weatherResult.appendChild(temperature);
+        weatherResult.appendChild(humidity);
+        weatherResult.appendChild(wind);
+
+    } catch (error) {
+        weatherResult.textContent =
+            "Unable to get weather. Please try again.";
+        console.error(error);
+    }
+}
